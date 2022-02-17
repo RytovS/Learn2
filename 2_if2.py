@@ -27,7 +27,7 @@ def example(word1,word2):
   else: 
     return'4'
  
-print(example('sc', 'cscs'))
+print(example(sc, vfvfdv))
 
 
 
