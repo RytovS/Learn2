@@ -15,13 +15,22 @@
     
 """
 
-questions_and_answers = {}
+from operator import truediv
+
+
+questions_and_answers = {"Как дела": "Хорошо!", "Что делаешь?": "Программирую", "Когда закончишь?":"Ближе к ночи",
+"Что ел на обед?":"Макдональдс", "Футбол смотрел?":"Матч был огонь", "Давай до завтра!":"Пока"}
+
 
 def ask_user(answers_dict):
-    """
-    Замените pass на ваш код
-    """
-    pass
+  while True:
+    ask = input('Что вы хотите спросить')
+    
+    if ask in questions_and_answers.keys():
+        print('Ответ:', questions_and_answers[ask])
+    else:
+      print('Ответ отсутствует! Попробуйте другой вопрос')
+
     
 if __name__ == "__main__":
     ask_user(questions_and_answers)
