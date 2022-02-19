@@ -13,8 +13,10 @@
 
 """
 import logging
+import ephem
 
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
+from datetime import date
 
 logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
                     level=logging.INFO,
@@ -30,23 +32,33 @@ PROXY = {
 }
 
 
-def greet_user(update, context):
+def greet_user(update, bot):
     text = 'Вызван /start'
     print(text)
     update.message.reply_text(text)
 
 
-def talk_to_me(update, context):
+def screen_planet (update, bot):
+    planet_input = str(update.message.text.split()[1]).lower().capitalize()
+    day = date.today().split("-")
+    print(day)
+    print(planet_input)
+    update.message.reply_text(planet_input)
+
+
+def talk_to_me(update, bot):
     user_text = update.message.text
     print(user_text)
     update.message.reply_text(text)
 
 
 def main():
-    mybot = Updater("КЛЮЧ, КОТОРЫЙ НАМ ВЫДАЛ BotFather", request_kwargs=PROXY, use_context=True)
+    mybot = Updater("5204868119:AAFGSwZG7VTEqPJr1bFjf8H-z1mQ_6oYo2o
+", request_kwargs=PROXY, use_context=True)
 
     dp = mybot.dispatcher
     dp.add_handler(CommandHandler("start", greet_user))
+    dp.add_handler(CommandHandler("planet", screen_planet))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
 
     mybot.start_polling()
@@ -55,3 +67,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
