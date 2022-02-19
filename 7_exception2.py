@@ -29,7 +29,7 @@ def discounted(price, discount, max_discount=20):
       return price - (price * discount / 100)
 
   except  TypeError:
-    print('Должны быть числа')
+    print('не числа')
 
   except ValueError as big_discount:
     print('Большая скидка')
