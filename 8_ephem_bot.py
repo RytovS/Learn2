@@ -12,59 +12,61 @@
   бота отвечать, в каком созвездии сегодня находится планета.
 
 """
-import logging
+
 import ephem
-
+import datetime
+import logging
+from os import set_inheritable
 from telegram.ext import Updater, CommandHandler, MessageHandler, Filters
-from datetime import date
-
-logging.basicConfig(format='%(name)s - %(levelname)s - %(message)s',
-                    level=logging.INFO,
-                    filename='bot.log')
 
 
-PROXY = {
-    'proxy_url': 'socks5://t1.learn.python.ru:1080',
-    'urllib3_proxy_kwargs': {
-        'username': 'learn',
-        'password': 'python'
-    }
-}
+import settings
 
+logging.basicConfig(filename='bot.log', level=logging.INFO)
 
-def greet_user(update, bot):
-    text = 'Вызван /start'
-    print(text)
+PROXY = {'proxy_url': settings.PROXY_URL ,
+    'urllib3_proxy_kwargs': {'username': settings.PROXY_USERNAME , 'password': settings.PROXY_PASSWORD}}
+
+def greet_user(update, context):
+    print ('Вызван /start')
+    update.message.reply_text('Здравствуй, человек Х')
+
+def talk_to_me(update, context):
+    text = update.message.text
+    print (text)
     update.message.reply_text(text)
 
 
-def screen_planet (update, bot):
-    planet_input = str(update.message.text.split()[1]).lower().capitalize()
-    day = date.today().split("-")
+def screen_planet (user_text):
+    planet_input = user_text.split()[1]
+    day = datetime.date.today()
     print(day)
     print(planet_input)
-    update.message.reply_text(planet_input)
+    return planet_input
 
-
-def talk_to_me(update, bot):
-    user_text = update.message.text
-    print(user_text)
-    update.message.reply_text(text)
+def planet_position(update, contex):  
+    print(update.message.text)
+    planet = screen_planet(update.message.text)
+    
+    planet_info = getattr(ephem, planet)
+    planet_date = planet_info(datetime.date.today())
+    planet_place = ephem.constellation(planet_date)
+    update.message.reply_text(f'{planet} position - {planet_place}')
+    
 
 
 def main():
-    mybot = Updater("5204868119:AAFGSwZG7VTEqPJr1bFjf8H-z1mQ_6oYo2o
-", request_kwargs=PROXY, use_context=True)
+    mybot = Updater(settings.API_KEY, use_context=True, request_kwargs=PROXY)
 
     dp = mybot.dispatcher
-    dp.add_handler(CommandHandler("start", greet_user))
-    dp.add_handler(CommandHandler("planet", screen_planet))
+    dp.add_handler(CommandHandler('start', greet_user))
+    dp.add_handler(CommandHandler('planet', planet_position))
     dp.add_handler(MessageHandler(Filters.text, talk_to_me))
 
+
+    logging.info("Бот стартовал")
     mybot.start_polling()
-    mybot.idle()
-
-
+    mybot.idle
+    
 if __name__ == "__main__":
     main()
-
