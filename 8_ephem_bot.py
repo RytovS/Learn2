@@ -13,6 +13,7 @@
 
 """
 
+from unittest import expectedFailure
 import ephem
 import datetime
 import logging
@@ -48,11 +49,15 @@ def planet_position(update, contex):
     print(update.message.text)
     planet = screen_planet(update.message.text)
     
-    planet_info = getattr(ephem, planet)
-    planet_date = planet_info(datetime.date.today())
-    planet_place = ephem.constellation(planet_date)
-    update.message.reply_text(f'{planet} position - {planet_place}')
+    try:   
+        planet_info = getattr(ephem, planet)
+        planet_date = planet_info(datetime.date.today())
+        planet_place = ephem.constellation(planet_date)
+        update.message.reply_text(f'{planet} position - {planet_place}')
     
+    except AttributeError:
+        update.message.reply_text("Такой планеты нет")
+
 
 
 def main():
